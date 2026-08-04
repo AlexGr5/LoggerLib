@@ -27,3 +27,5 @@ CMakeLists.txt:
 Запуск тестовой программы:
     cd build
     ./TestLogLib
+
+    
