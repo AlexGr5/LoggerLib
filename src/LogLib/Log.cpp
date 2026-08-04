@@ -3,18 +3,20 @@
 #include <iomanip>
 #include <ctime>
 
+using namespace std;       // Пространство имен (мне так удобней)
+
 // Конструктор по-умолчанию
-Log::Log() : level(INFO), message(""), timeLog(chrono::system_clock::now()) {}
+Log::Log() : level(Level::INFO), message{}, timeLog(chrono::system_clock::now()) {}
 
 // Конструктор со всеми параметрами
-Log::Log(Level level, string message, chrono::system_clock::time_point timeLog)
-    : level(level), message(move(message)), timeLog(timeLog) {}
+Log::Log(Level level, const string& message, chrono::system_clock::time_point timeLog)
+    : level(level), message(message), timeLog(timeLog) {}
 
 // Установить и получить поля
 void Log::setLevel(Level level) { this->level = level; }
 Level Log::getLevel() const { return level; }
 
-void Log::setMessage(string message) { this->message = move(message); }
+void Log::setMessage(const string& message) { this->message = message; }
 string Log::getMessage() const { return message; }
 
 void Log::setTimeLog(chrono::system_clock::time_point timeLog) { this->timeLog = timeLog; }
@@ -24,9 +26,6 @@ chrono::system_clock::time_point Log::getTimeLog() const { return timeLog; }
 string Log::toString() const {
     return "[" + timePointToString(timeLog) + "] [" + levelToString(level) + "] " + message;
 }
-
-// Деструктор
-Log::~Log() {}
 
 // Преобразовать chrono::system_clock::time_point в строку формата "ГГГГ-ММ-ДД ЧЧ:ММ:СС"
 string timePointToString(const chrono::system_clock::time_point& tp) {

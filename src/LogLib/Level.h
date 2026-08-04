@@ -1,18 +1,20 @@
+#pragma once
+
 #include "Includes.h"
-#include <stdexcept>    // Исключения
 
 // Перечисление уровней важности сообщений.
 // Порядок значений важен: чем выше числовое значение, тем важнее сообщение.
 // Сообщения с уровнем НИЖЕ заданного минимального НЕ записываются в журнал.
-enum Level {
+enum class Level : uint8_t {
     INFO    = 0,  // Информационное сообщение (наименее важное)
     WARNING = 1,  // Предупреждение
-    ERROR   = 2   // Ошибка (наиболее важное)
+    ERROR   = 2,  // Ошибка (наиболее важное)
+    UNKNOWN       // Неизвестный тип
 };
 
 // Преобразование уровня в строку для записи в журнал
-string levelToString(Level lvl);
+std::string levelToString(Level lvl);
 
 // Преобразование строки в уровень важности
 // Бросает исключение, если строка не соответствует ни одному уровню
-Level stringToLevel(const string& str);
+Level stringToLevel(const std::string& str);

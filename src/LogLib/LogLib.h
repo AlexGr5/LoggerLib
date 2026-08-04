@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Log.h"
 
 #include <queue>                // Очередь
@@ -18,7 +20,7 @@
 class LogLib {
 private:
     // Название файла для записей логов
-    string fileName;
+    std::string fileName;
 
     // Минимальный уровень важности записи логов.
     // Сообщения с уровнем ниже заданного не записываются в журнал.
@@ -26,19 +28,19 @@ private:
 
     // --- Producer-Consumer ---
     // Очередь логов, Producer кладёт сюда, Consumer забирает отсюда
-    queue<Log> logQueue;
+    std::queue<Log> logQueue;
 
     // Мьютекс для защиты очереди logQueue и поля minLevel
-    mutex queueMutex;
+    std::mutex queueMutex;
 
     // Условная переменная, Consumer спит, пока очередь пуста
-    condition_variable cv;
+    std::condition_variable cv;
 
     // Фоновый поток-потребитель (Consumer), который пишет логи в файл
-    thread workerThread;
+    std::thread workerThread;
 
     // Флаг пока true — поток работает; при false — поток завершается
-    atomic<bool> isRunning;
+    std::atomic<bool> isRunning;
 
     // Функция фонового потока (Потребитель).
     // Ждёт появления логов в очереди и записывает их в файл.
@@ -46,10 +48,10 @@ private:
 
 public:
     // Конструктор с именем файла (уровень по умолчанию — INFO)
-    LogLib(string fileName);
+    LogLib(const std::string& fileName);
 
     // Конструктор с именем файла и минимальным уровнем важности
-    LogLib(string fileName, Level minLevel);
+    LogLib(const std::string& fileName, Level minLevel);
 
     // Запрещаем копирование, так как класс владеет потоком и мьютексом
     LogLib(const LogLib&) = delete;
@@ -62,19 +64,19 @@ public:
     Level getMinLevel() const;
 
     // Получить имя файла
-    string getFileName() const;
+    std::string getFileName() const;
 
     // Добавить лог с сообщением (уровень = minLevel по умолчанию)
-    void addLog(string message);
+    void addLog(const std::string& message);
 
     // Добавить лог с сообщением и уровнем важности
-    void addLog(Level level, string message);
+    void addLog(Level level, const std::string& message);
 
     // Добавить лог с сообщением и временем
-    void addLog(string message, chrono::system_clock::time_point timeLog);
+    void addLog(const std::string& message, std::chrono::system_clock::time_point timeLog);
 
     // Добавить лог в очередь со всеми параметрами
-    void addLog(Level level, string message, chrono::system_clock::time_point timeLog);
+    void addLog(Level level, const std::string& message, std::chrono::system_clock::time_point timeLog);
 
     // Деструктор: останавливает фоновый поток, дожидается записи всех логов
     ~LogLib();

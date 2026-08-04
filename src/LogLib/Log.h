@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Level.h"
 #include <chrono>   // Для использования времени
 
@@ -7,33 +9,30 @@ private:
     // Уровень важности
     Level level;
     // Текст сообщения
-    string message;
+    std::string message;
     // Время лога
-    chrono::system_clock::time_point timeLog;
+    std::chrono::system_clock::time_point timeLog;
 
 public:
     // Конструктор по-умолчанию
     Log();
 
     // Конструктор со всеми параметрами
-    Log(Level level, string message, chrono::system_clock::time_point timeLog);
+    Log(Level level, const std::string& message, std::chrono::system_clock::time_point timeLog);
 
     // Установить и получить поля
     void setLevel(Level level);
     Level getLevel() const;
 
-    void setMessage(string message);
-    string getMessage() const;
+    void setMessage(const std::string& message);
+    std::string getMessage() const;
 
-    void setTimeLog(chrono::system_clock::time_point timeLog);
-    chrono::system_clock::time_point getTimeLog() const;
+    void setTimeLog(std::chrono::system_clock::time_point timeLog);
+    std::chrono::system_clock::time_point getTimeLog() const;
 
     // Лог в строку (формат: [время] [уровень] текст)
-    string toString() const;
-
-    // Деструктор
-    ~Log();
+    std::string toString() const;
 };
 
 // Преобразовать chrono::system_clock::time_point в строку
-string timePointToString(const chrono::system_clock::time_point& tp);
+std::string timePointToString(const std::chrono::system_clock::time_point& tp);

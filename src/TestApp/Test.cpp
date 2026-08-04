@@ -4,6 +4,8 @@
 #include <vector>
 #include "LogLib.h"
 
+using namespace std;       // Пространство имен
+
 // Основной цикл пользовательского интерфейса
 void loop();
 
@@ -75,7 +77,7 @@ void loop() {
                     Level lvl = stringToLevel(inputLevel);
                     logFiles.push_back(make_unique<LogLib>(inputFileName, lvl));
                 } catch (...) {
-                    logFiles.push_back(make_unique<LogLib>(inputFileName, INFO));
+                    logFiles.push_back(make_unique<LogLib>(inputFileName, Level::INFO));
                 }
 
                 inputStr = "";
@@ -257,17 +259,17 @@ bool oneOrTwo(const string& str) {
 // а фоновые потоки внутри каждого LogLib записывают их на диск.
 // ============================================================
 void afkTest() {
-    auto myLogs = make_unique<LogLib>("name1.txt", WARNING);
-    auto noMyLogs = make_unique<LogLib>("name2.txt", INFO);
+    auto myLogs = make_unique<LogLib>("name1.txt", Level::WARNING);
+    auto noMyLogs = make_unique<LogLib>("name2.txt", Level::INFO);
 
     // Producer: кладём логи в очереди
-    myLogs->addLog(ERROR, "1 Everything is bad!");
-    myLogs->addLog(WARNING, "1 Could be better.");
-    myLogs->addLog(INFO, "1 Everything is fine!");  // Не запишется (INFO < WARNING)
+    myLogs->addLog(Level::ERROR, "1 Everything is bad!");
+    myLogs->addLog(Level::WARNING, "1 Could be better.");
+    myLogs->addLog(Level::INFO, "1 Everything is fine!");  // Не запишется (INFO < WARNING)
 
-    noMyLogs->addLog(ERROR, "2 Everything is bad!");
-    noMyLogs->addLog(WARNING, "2 Could be better.");
-    noMyLogs->addLog(INFO, "2 Everything is fine!");
+    noMyLogs->addLog(Level::ERROR, "2 Everything is bad!");
+    noMyLogs->addLog(Level::WARNING, "2 Could be better.");
+    noMyLogs->addLog(Level::INFO, "2 Everything is fine!");
 
     cout << "Логи добавлены в очереди. Запись на диск идёт в фоновых потоках." << endl;
 

@@ -1,21 +1,23 @@
 #include "LogLib.h"
 #include <iostream>
 
+using namespace std;       // Пространство имен (мне так удобней)
+
 // ============================================================
 // Конструкторы
 // ============================================================
 
 // Конструктор с именем файла (уровень по умолчанию — INFO)
-LogLib::LogLib(string fileName)
-    : fileName(move(fileName)), minLevel(INFO), isRunning(true)
+LogLib::LogLib(const string& fileName)
+    : fileName((fileName)), minLevel(Level::INFO), isRunning(true)
 {
     // Запускаем фоновый поток-потребитель сразу при создании объекта
     workerThread = thread(&LogLib::workerFunction, this);
 }
 
 // Конструктор с именем файла и минимальным уровнем важности
-LogLib::LogLib(string fileName, Level minLevel)
-    : fileName(move(fileName)), minLevel(minLevel), isRunning(true)
+LogLib::LogLib(const string& fileName, Level minLevel)
+    : fileName((fileName)), minLevel(minLevel), isRunning(true)
 {
     // Запускаем фоновый поток-потребитель сразу при создании объекта
     workerThread = thread(&LogLib::workerFunction, this);
@@ -48,36 +50,36 @@ string LogLib::getFileName() const {
 // ============================================================
 
 // Добавить лог с сообщением (уровень по умолчанию)
-void LogLib::addLog(string message) {
-    addLog(minLevel, move(message), chrono::system_clock::now());
+void LogLib::addLog(const string& message) {
+    addLog(minLevel, (message), chrono::system_clock::now());
 }
 
 // Добавить лог с сообщением и уровнем важности
-void LogLib::addLog(Level level, string message) {
-    addLog(level, move(message), chrono::system_clock::now());
+void LogLib::addLog(Level level, const string& message) {
+    addLog(level, (message), chrono::system_clock::now());
 }
 
 // Добавить лог с сообщением и временем
-void LogLib::addLog(string message, chrono::system_clock::time_point timeLog) {
-    addLog(minLevel, move(message), timeLog);
+void LogLib::addLog(const string& message, chrono::system_clock::time_point timeLog) {
+    addLog(minLevel, (message), timeLog);
 }
 
 // Добавить лог в очередь со всеми параметрами.
 // Это основной метод Producer: захватывает мьютекс, кладёт лог в очередь,
 // будит Consumer и мгновенно возвращается.
-void LogLib::addLog(Level level, string message, chrono::system_clock::time_point timeLog) {
+void LogLib::addLog(Level level, const string& message, chrono::system_clock::time_point timeLog) {
     // Фильтрация: сообщения с уровнем НИЖЕ минимального не записываются
     if (level < minLevel) {
         return;
     }
 
     // Формируем объект лога
-    Log logEntry(level, move(message), timeLog);
+    Log logEntry(level, (message), timeLog);
 
     {
         // Критическая секция: защищаем доступ к очереди
         lock_guard<mutex> lock(queueMutex);
-        logQueue.push(move(logEntry));
+        logQueue.push((logEntry));
     }
 
     // Уведомляем фоновый поток (Consumer), что в очереди появился новый лог.
@@ -121,7 +123,7 @@ void LogLib::workerFunction() {
         // уменьшая количество переключений контекста.
         while (!logQueue.empty()) {
             // Забираем лог из головы очереди
-            Log currentLog = move(logQueue.front());
+            Log currentLog = (logQueue.front());
             logQueue.pop();
 
             // Разблокируем мьютекс на время записи в файл,
