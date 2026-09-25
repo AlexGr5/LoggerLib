@@ -16,13 +16,10 @@
 -TestApp
 Тестовая программа
 
-Собрать проект можно через Makefile или CMakeLists.txt
+Собрать проект можно через Makefile
 Makefile:
     make all
-CMakeLists.txt:
-    cd build
-    cmake ..
-    cmake --build .
+
 
 Запуск тестовой программы:
     cd build
